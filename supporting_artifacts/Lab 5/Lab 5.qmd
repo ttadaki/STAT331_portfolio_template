@@ -1,0 +1,130 @@
+---
+title: "Lab 5"
+author: "Trenton Tadaki"
+format:
+  html: 
+    self-contained: true
+    code-tools: true
+    code-fold: true
+execute: 
+  echo: true
+  error: true
+  message: false
+  warning: false
+---
+
+# Set-up
+
+```{r setup}
+#| message: false
+library('tidyverse')
+library('here')
+library('lubridate')
+```
+
+```{r data}
+#| warning: false
+# Code for question 1! 
+surveys <- read_csv(here("Week 2", "Lab 2", "surveys.csv"))
+```
+
+**1. Reorder the species so the boxplots for weights go in descending order (largest to smallest).**
+
+**2. Now that you've reordered, look at your y-axis label. That's long! Let's take Will Chase's advice and move the y-axis label to the top of the plot.**
+
+```{r 1 and 2}
+# Code for question 14!
+ggplot(data = surveys, mapping = aes(y = fct_reorder(species, weight), x = weight)) +
+  geom_boxplot() +
+  geom_jitter(alpha = 0.1, color = 'cadetblue') +
+  labs(title = "Weight Distribution of Animal Species", x = 'Weight in grams', y = "")
+  
+#Revision
+#Adjusted the Plot Title to be more specific and concise about the data being displayed.
+
+```
+
+# Time-Series Plot
+
+**3. Create a visualization how weights vary for each genus over the duration of the study.**
+
+```{r}
+genus_weight <- surveys |>
+  group_by(genus) |>
+  mutate(year = year(date)) |>
+  na.omit()
+
+ggplot(data = genus_weight, mapping = aes(x = year, y = weight)) +
+  geom_line(mapping = aes(color = genus)) +
+  labs(title = "Weight of Genus over time", y = "Weight in grams") +b 3
+  theme_grey(base_size = 10)
+
+#Revision
+#Increased text base size to improve readability of code
+```
+
+**4. Calculate and plot the [mean]{.underline} weight for each genus for each year.**
+
+**5. Reorder the lines so the mean weights go in descending order (largest to smallest).**
+
+```{r}
+genus_mean_weight <- surveys |>
+  mutate(year = year(date)) |>
+  group_by(genus, year) |>
+  summarise(mean_weight = mean(weight)) |>
+  na.omit()
+
+ggplot(data = genus_mean_weight, mapping = aes(x = year, y = mean_weight)) +
+  geom_line(mapping = aes(color = fct_rev(fct_reorder(genus, mean_weight)))) +
+  labs(title = "Mean Weight of Genus over Time", y = "") +
+  scale_color_discrete(name = "Genus") +
+  theme_grey(base_size = 10)
+
+#Revision
+#Removed the y-axis label to minimize redundancy of labels, since the title of the graph already explains what is being graphed.
+```
+
+# Time-Series Plot
+
+**1. Create a visualization of the number of rodents captured each day of the week.**
+
+**2. Change the order of the day of the week to go Monday through Sunday.**
+
+```{r}
+rodent_data <- surveys |>
+  filter(taxa == 'Rodent') |>
+  mutate(days_of_week = factor(wday(date, label = TRUE), levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"))) |>
+  group_by(days_of_week) |>
+  na.omit()
+
+ggplot(data = rodent_data, mapping = aes(x = days_of_week)) +
+  geom_bar(mapping = aes(fill = days_of_week)) +
+  labs(title = "Rodents Captured each Weekday", x = "Days of the Week") +
+  theme(legend.position = "none")
+
+#Revision
+#In order to improve efficiency, I included the levels argument for when I mutate the weekday factor, instead of including it separately.
+```
+
+**3. Collapse Monday through Friday into a `"Weekday"` level, and collapse Saturday and Sunday into a `"Weekend"` level. Plot the number of rodents captured between the two groups.**
+
+```{r}
+week_day_end <- 
+  fct_collapse(rodent_data$days_of_week, 
+               "Weekday" = c("Mon", 
+                             "Tue", 
+                             "Wed", 
+                             "Thu", 
+                             "Fri"), 
+               "Weekend" = c("Sat", 
+                             "Sun"))
+
+ggplot(data = rodent_data, mapping = aes(x = week_day_end)) +
+  geom_bar(mapping = aes(fill = days_of_week)) +
+  scale_fill_brewer(palette = "Accent") |>
+  labs(title = "Rodents Captured (Weekend vs Weekdays)", x = "") +
+  theme_grey(base_size = 10)
+
+#Revision
+#As stated earlier, in order to improve efficiency, I included the levels argument for when I mutate the weekday factor, instead of including it separately.
+```

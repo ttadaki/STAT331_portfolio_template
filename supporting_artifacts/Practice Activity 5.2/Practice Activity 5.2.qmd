@@ -1,0 +1,166 @@
+---
+title: "Practice Activity 5.2"
+author: "Trenton Tadaki"
+format:
+  html: 
+    self-contained: true
+    code-tools: true
+    code-fold: true
+execute: 
+  echo: true
+  error: true
+  message: false
+  warning: false
+---
+
+```{r Set Up}
+library(tidyverse)
+
+message <- read_csv(here::here("Week 5", 
+                                 "Practice Activity 5.2", 
+                                 "scrambled_message.txt")
+                      )
+word <- message %>% 
+  pull(Word)
+```
+
+## Warm-up exercises
+
+1.  How many characters are in the scrambled message?
+
+[**Vector Approach:**]{.underline}
+
+```{r num-chr-vector}
+str_length(word) %>% 
+  sum()
+```
+
+[**Dataframe Approach:**]{.underline}
+
+```{r num-chr-dataframe}
+message %>% 
+  mutate(length = str_length(Word)) %>% 
+  summarise(total_length = sum(length))
+```
+
+2.  How many words are in the scrambled message?
+
+[**Vector Approach:**]{.underline}
+
+```{r num-words-vector}
+str_subset(word, pattern = "\\b") %>% 
+  length()
+```
+
+[**Dataframe Approach:**]{.underline}
+
+```{r num-words-dataframe}
+message %>% 
+  filter(str_detect(Word, pattern = "\\w")) %>% 
+  count() 
+```
+
+3.  Print out every piece of a word in the scrambled message that starts with the letter "m".
+
+```{r}
+str_subset(word, 
+           pattern = "^m")
+```
+
+3.  Print out every piece of a word in the scrambled message that ends with the letter "z"
+
+    ```{r}
+    str_subset(word, 
+               pattern = "z$")
+    ```
+
+4.  Print out every punctuation symbol in the scrambled message.
+
+    ```{r}
+    str_extract_all(word, pattern = "[:punct:]") |>
+      unlist()
+
+
+
+    ```
+
+::: callout-tip
+# Every punctuation symbol!
+
+Careful! There could be multiple punctuation symbols in a word, so `str_extract_all()` seems like the better tool. However, the output of this funtion is a *list*. A helpful function for flattening a list to a regular column is `unnest()`!
+:::
+
+6.  Print out the longest word in the scrambled message.
+
+```{r}
+nchar
+
+```
+
+## Decode a message
+
+Complete the following steps to decode the message.
+
+1.  Remove any spaces before or after each word.
+
+    ```{r}
+    word_clean <- word |>
+      str_trim(side = "both") 
+
+    ```
+
+2.  No word should be longer than 16 characters. Drop all extra characters off the end of each word.
+
+    ```{r}
+    word_clean <- word_clean |>
+      str_sub_all(start = 1L, end = 16)
+    ```
+
+3.  Any time you see the word "ugh", with any number of h's, followed by a punctuation mark, delete this.
+
+    ```{r}
+    word_clean <- word_clean |>
+      str_remove_all(pattern = "ugh*")
+    ```
+
+4.  Replace all instances of exactly 2 a's with exactly 2 e's.
+
+    ```{r}
+    word_clean <- word_clean |>
+      str_replace_all(pattern = "aa", replace = "ee")
+    ```
+
+<!-- -->
+
+1.  Replace all z's with t's.
+
+    ```{r}
+    word_clean <- word_clean |>
+      str_replace_all(pattern = "z", replace = "t")
+    ```
+
+2.  Every word that ends in b, change that to a y.
+
+    ```{r}
+    word_clean <- word_clean |>
+      str_replace(pattern = "b$", replace = "y")
+    ```
+
+3.  Every word that starts with k, change that to a v.
+
+    ```{r}
+    word_clean <- word_clean |>
+      str_replace_all(pattern = "^k", replace = "v")
+    ```
+
+4.  Use `str_c()` to recombine all your words into a message.
+
+    ```{r}
+    word_clean <- word_clean |>
+      str_flatten(" ")
+
+
+
+    ```
+
+5.  Find the movie this quote is from.

@@ -1,0 +1,91 @@
+---
+title: "Challenge 3"
+author: "Trenton Tadaki"
+format:
+  html: 
+    self-contained: true
+    code-tools: true
+    code-fold: true
+execute: 
+  echo: true
+  error: true
+---
+
+# Challenge 3: Group Comparisons & Data Ethics
+
+```{r Set up}
+#| message: false
+# code chunk for loading packages and importing the data
+library(tidyverse)
+hiphop <- read_csv(here::here("Week 3", "Lab 3", "hiphop.csv"))
+
+hiphop_clean <- hiphop |>
+  drop_na(numPreferredArtists,
+          numOverallArtists) |>
+  mutate(
+    across(
+      c(jayz, barkley, boondocks, monique, bieber, familiarity, fam1),
+      as.factor))
+
+hiphop_clean <- hiphop_clean |>
+  mutate(
+    ethnic = if_else(ethnic == 'white',
+                     'white',
+                     'non-white'))
+```
+
+## Published Comparisons
+
+In the published article ([You Know What It Is: Learning Words through Listening to Hip-Hop](https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0028248&type=printable)), the author presents a series of comparisons about the variables which most explain an individual's familiarity with African American English (AAE).
+
+Let us instead compare the number of artists participants reported liking for each genre. Specifically, you will determine which music genre most differentiates each of the demographic groups provided.
+
+> Which genre had much higher average (mean or median) reported artists in one group than the other.
+>
+> -   Male versus Female
+> -   White versus Non-White
+
+```{r}
+hiphop_artists <- hiphop_clean |>
+  select(subj, sex, ethnic, intl:unclassifiable) |>
+  distinct(subj, .keep_all = TRUE)
+
+
+#Male versus Female
+hiphop_artists |>
+  group_by(sex) |>
+  summarise(
+    across(
+      intl:unclassifiable, mean)) |>
+  summarise(
+    across(
+      intl:unclassifiable, diff)) |>
+  abs() |>
+  which.max()
+
+#White versus Non-white
+hiphop_artists |>
+  group_by(ethnic) |>
+  summarise(
+    across(
+      intl:unclassifiable, mean)) |>
+  summarise(
+    across(
+      intl:unclassifiable, diff))|>
+  abs() |>
+  which.max()
+
+#Previous to my revision, I was able to write out the necessary code to find an answer to the above questions, but I ran out of time and was unable to apply it to the question. Here is the completed code with its respective answers to the question.
+```
+
+The vocal/jazz/musicals genre had the highest difference in mean number of liked artists of 2 between male and female participants.
+
+The rock genre had the highest difference in mean number of liked artists of 5 between white and non-white participants.
+
+## Study Design Critique -- Data Ethics
+
+> Based on the design of this study and its context (African American English), what are **at least two** concerns you have? Keep in mind this critique aligns with conversations regarding data ethics. Thus, your concerns need to address the racial aspects of the design of this study.
+
+I ran out of time for the assignment and was unable to write my answer to the question. Here is my answer:
+
+The way that this study and its results are framed implies that association with black people or culture leads to better familiarity with African American English. Studies like these are particularly dangerous and unethical because it is generalizing an entire group of people's experiences and has the potential to alter the perceptions of readers. AAE as a dialect has been cultivated and used by black American culture, but it isn't used by all black people. Additionally, another racial concern I have is with the participants chosen in the data set. By removing the black participant's responses, the study is essentially making assumptions about the black participant's experiences that encourages stereotypes and generalization.

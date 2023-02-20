@@ -1,0 +1,229 @@
+---
+title: "Lab 2"
+author: "Trenton Tadaki"
+format:
+  html: 
+    self-contained: true
+    code-tools: true
+    code-fold: true
+execute: 
+  echo: true
+  error: true
+  message: false
+  warning: false
+---
+
+# Set-up
+
+In the code chunk below load in the packages necessary for your analysis. You should only need the tidyverse and here packages for this analysis, unless you decide to use additional resources.
+
+```{r setup}
+#| message: false
+library('tidyverse')
+library('here')
+```
+
+# Data Context
+
+The Portal Project is a long-term ecological study being conducted near Portal, AZ. Since 1977, the site has been used to study the interactions among rodents, ants and plants and their respective responses to climate. To study the interactions among organisms, we experimentally manipulate access to 24 study plots. This study has produced over 100 scientific papers and is one of the longest running ecological studies in the U.S.
+
+We will be investigating the animal species diversity and weights found within plots at the Portal study site. The dataset is stored as a comma separated value (CSV) file. Each row holds information for a single animal, and the columns represent:
+
+| Column          | Description                        |
+|-----------------|------------------------------------|
+| record_id       | Unique id for the observation      |
+| month           | month of observation               |
+| day             | day of observation                 |
+| year            | year of observation                |
+| plot_id         | ID of a particular plot            |
+| species_id      | 2-letter code                      |
+| sex             | sex of animal ("M", "F")           |
+| hindfoot_length | length of the hindfoot in mm       |
+| weight          | weight of the animal in grams      |
+| genus           | genus of animal                    |
+| species         | species of animal                  |
+| taxon           | e.g. Rodent, Reptile, Bird, Rabbit |
+| plot_type       | type of plot                       |
+
+### **Question 1**
+
+Using the `read_csv()` function and the **here** package, write the code to load in the `surveys.csv` dataset. For simplicity, store the dataset in an object named `surveys`.
+
+```{r data}
+#| warning: false
+# Code for question 1! 
+surveys <- read_csv(here("Week 2", "Lab 2", "surveys.csv"))
+```
+
+## Inspecting the Data
+
+```{r inspect-data}
+#2
+dim(surveys)
+#3
+str(surveys)
+```
+
+### **Question 2**
+
+What are the dimensions of these data?\
+
+There are 30463 observations and 15 variables
+
+### **Question 3**
+
+What are the data types of the variables in the dataset?\
+\
+integers: record_id, month, day, year, plot_id, hindfoot_length, weight\
+characters: species_id, sex, day_of_week, plot_type, genus, species, taxa\
+date: date\
+
+### **Question 4**
+
+First, create a scatterplot of the relationship between `weight` (on the x-axis) and `hindfoot_length` (on the y-axis).
+
+```{r scatterplot}
+# Code for question 4! 
+ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) +
+  geom_point()
+```
+
+We can see there are **a lot** of points plotted on top of each other. Let's try and modify this plot to extract more information from it.
+
+### **Question 5**
+
+Add transparency (`alpha`) to the points, to make the points more transparent and (possibly) easier to see.
+
+```{r alpha}
+#Code for question 5!
+ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) +
+  geom_point(alpha = 0.3)
+```
+
+Well, that is better, but there are still large clumps of data being plotted on top of each other. Let's try another tool!
+
+### **Question 6**
+
+Add some jitter to the points in the scatterplot.\
+*Hint: both `geom_point()` and `geom_jitter()` add points to the plot.*
+
+```{r jitter}
+# Code for question 6! 
+ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) +
+  geom_jitter(alpha = 0.3)
+```
+
+## Faceting
+
+Despite our best efforts there is still a substantial amount of overplotting occurring in our scatterplot. Let's try splitting the dataset into smaller subsets and see if that allows for us to see the trends a bit better.
+
+### **Question 7**
+
+Facet your jittered scatterplot by `species`.
+
+```{r facet}
+# Code for question 7
+ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) +
+  geom_jitter(alpha = 0.3) +
+  facet_wrap(vars(species))
+```
+
+# Boxplots & Density Ridges
+
+### **Question 8**
+
+Create side-by-side boxplots to visualize the distribution of weight within each species.
+
+```{r boxplot-jitter-points}
+# Code for question 8 (and 9 and 10 and 11 and 12)! :) 
+#8
+ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
+  geom_boxplot() +
+  labs(title = 'Question 8') +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))
+
+#9
+ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
+  geom_boxplot() +
+  geom_point() +
+  labs(title = 'Question 9') +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))
+
+#10
+ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
+  geom_boxplot() +
+  geom_jitter(alpha = 0.1, mapping = aes(x = species, y = weight)) +
+  labs(title = 'Question 10') +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))
+
+#11
+ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
+  geom_boxplot() +
+  geom_jitter(alpha = 0.1, color = 'cadetblue') +
+  labs(title = 'Question 11') +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))
+
+#12
+ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(alpha = 0.1, color = 'cadetblue') +
+  labs(title = 'Question 12') +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))
+```
+
+A fundamental complaint of boxplots is that they do not plot the raw data. However, with **ggplot** we can add the raw points on top of the boxplots!
+
+### **Question 9**
+
+Add another layer to your previous plot (above) that plots each observation.
+
+Alright, this should look less than optimal. Your points should appear rather stacked on top of each other. To make them less stacked, we need to jitter them a bit, using `geom_jitter()`.
+
+### **Question 10**
+
+Remove the previous layer you had and include a `geom_jitter()` layer.
+
+That should look a bit better! But its really hard to see the points when everything is black.
+
+### **Question 11**
+
+Use the `color` argument in `geom_jitter()` to change the color of the points. You are welcome to use whatever color you wish, some of my favorites are: tomato, cadetblue, and darkseagreen :)
+
+Great! Now that you can see the points, you should notice something odd: there are two colors of points still being plotted. Some of the observations are being plotted twice, once from `geom_boxplot()` as outliers and again from `geom_jitter()`!
+
+### **Question 12**
+
+Inspect the help file for `geom_boxplot()` and see how you can remove the outliers from being plotted by `geom_boxplot()`. Make this change in the code above!
+
+# Customization
+
+Some small changes that make **big** differences to plots. One of these changes are better labels for a plot's axes and legend.
+
+### **Question 13**
+
+Using the code you created in question 12, modify the x-axis and y-axis labels to describe what is being plotted. Be sure to include any necessary units!
+
+```{r}
+# Code for question 13! 
+ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(alpha = 0.1, color = 'cadetblue') +
+  labs(x = 'Species of Animal', y = 'Weight in grams') +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+  theme_grey(base_size = 9)
+```
+
+Some people (and journals) prefer for boxplots to be stacked with a specific orientation! Let's practice changing the orientation of our boxplots.
+
+### **Question 14**
+
+Flip the orientation of your boxplots from question 10. If you created side-by-side boxplots (stacked horizontally), your boxplots should be stacked vertically. If you had vertically stacked boxplots, you should stack your boxplots horizontally!\
+*Hint: You **do not** need to add an additional layer.*
+
+```{r}
+# Code for question 14!
+ggplot(data = surveys, mapping = aes(y = species, x = weight)) +
+  geom_boxplot() +
+  geom_jitter(alpha = 0.1, color = 'cadetblue') +
+  labs(y = 'Species of Animal', x = 'Weight in grams')
+```

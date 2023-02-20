@@ -1,0 +1,92 @@
+---
+title: "Challenge 4"
+author: "Trenton Tadaki"
+format:
+  html: 
+    self-contained: true
+    code-tools: true
+    code-fold: true
+execute: 
+  echo: true
+  error: true
+  message: false
+  warning: false
+---
+
+## **Challenge 4**
+
+A joke in the media is that Millennials can't afford houses, because they spend all their money buying avocado toast. Let's use this dataset to address that claim.
+
+> Find or make a dataset with house prices for these four California regions. Join this dataset with your California avocado dataset.
+
+> Use your new joined dataset to make an argument about the relationship between house prices and avocado prices/sales.
+
+> Support your argument with a plot.
+
+```{r Set up}
+library(tidyverse)
+library(here)
+library(lubridate)
+
+housing_prices_og <- read_csv(here("Week 4", "Challenge 4", "City_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv"))
+
+avocado <- read_csv(here("Week 4", "Lab 4", "avocado.csv"))
+
+cali_regions <- tibble(region = c("LosAngeles", "SanDiego", "Sacramento", "SanFrancisco"))
+
+avocado_clean <- avocado |>
+  rename("Small_Medium" = "4046", 
+         "Large" = "4225",
+         "Extra Large" = "4770")
+```
+
+```{r}
+avocado_new <- avocado_clean |>
+  semi_join(y = cali_regions, by = 'region') |>
+  mutate('Avo_sales_USD' = AveragePrice * `Total Volume`,
+         'Date' = as.Date(Date),
+         'month' = floor_date(Date, 'month')) |>
+  select(month, Avo_sales_USD, region) |>
+  group_by(region, month) |>
+  summarise(Avo_sales_USD = sum(Avo_sales_USD))
+  
+
+housing_prices <- housing_prices_og |>
+  pivot_longer("2015-01-31" : "2018-03-31",
+             names_to = "Date",
+             values_to = "Avg_house_price") |>
+  filter(State == "CA") |>
+  mutate('region' =
+           str_replace(RegionName,
+                       " ", 
+                       ""),
+         'Date' = as.Date(Date),
+         'month' = floor_date(Date, 'month')) |>
+  select(region, month, Avg_house_price) |>
+  right_join(cali_regions) |>
+  drop_na() 
+
+#REVISION
+#Before, I had used multiple mutate functions to replace each of the city names with ones without the spaces. However, now I know that I can simply use the str_replace function to edit the strings directly.
+
+avo_house <- housing_prices |>
+  full_join(avocado_new, by = c('region', 'month'))
+
+#REVISION
+#Before, I did not have a good grasp on the join functions, so I used a merge() function to join my two dataframes. However, I was required to use full_join() for the purpose of this assignment.
+
+
+ggplot(data = avo_house) +
+  geom_line(mapping = aes(x = month, y = Avg_house_price), color = "blue") +
+  geom_line(mapping = aes(x = month, y = Avo_sales_USD), color = "red") +
+  facet_wrap(~region, ncol = 2) +
+  ylab('USD')
+```
+As you can see from the plots, the relative rate at which the sales of avocados being sold in the US is increasing at a similar rate as that of housing costs. Thus, it is difficult to conclude whether Californian Millenials cannot afford to purchase houses due to their over consumption of avocados.
+
+
+Work Cited:
+
+https://stackoverflow.com/questions/65257153/rename-values-based-on-a-filter
+
+https://stackoverflow.com/questions/33221425/how-do-i-group-my-date-variable-into-month-month-in-r
