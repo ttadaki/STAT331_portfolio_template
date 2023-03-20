@@ -126,7 +126,7 @@ Complete the following steps to decode the message.
 4.  Replace all instances of exactly 2 a's with exactly 2 e's.
 
     ```{r}
-    word_clean <- word_clean |>
+word_clean <- word_clean |>
       str_replace_all(pattern = "aa", replace = "ee")
     ```
 

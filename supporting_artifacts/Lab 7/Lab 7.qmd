@@ -1,0 +1,128 @@
+---
+title: "Lab 7"
+author: "Trenton Tadaki"
+format:
+  html: 
+    self-contained: true
+    code-tools: true
+    code-fold: true
+execute: 
+  echo: true
+  error: true
+  message: false
+  warning: false
+---
+
+## Set Up
+
+```{r Set Up}
+library(tidyverse)
+library(here)
+library(gridExtra)
+
+
+
+
+fish_data <- read_csv(here("Week 7", "Lab 7", "BlackfootFish.csv"))
+```
+
+## **2 Part One: Summaries and Plots**
+
+## **2.1 Summarizing Missing Data**
+
+```{r}
+fish_data |>
+  summarise(
+    across(.cols = everything(), 
+           .fns = ~ sum(is.na(.x))))
+```
+
+The "weight" variable has missing values present according to the code above. Within this variable, there are 1796 observations of missing values.
+
+## **2.2 Visualizing Missing Data**
+
+Create a thoughtful visualization exploring the frequency of missing values across the different years, sections, and trips.
+
+```{r}
+fish_data_na <- fish_data |>
+  filter(is.na(weight)) |>
+  group_by(section, year)
+
+ggplot(data = fish_data_na, 
+       mapping = aes(
+         x = year, fill = section)) +
+  geom_bar(position = "dodge") +
+  facet_grid(cols = vars(trip)) +
+  theme_light(base_size = 12) +
+  labs(title = "Frequency of Missing Values by Trip 1 or 2") +
+  scale_fill_manual(values = c("#00AFBB", "#CC79A7"))
+
+
+```
+
+## **3 Part Two: Adjusting the Data (Function Writing)**
+
+```{r}
+rescale_01 <- function(x) {
+  stopifnot(is.numeric(x))
+  if(length(x) <= 1){
+    stop("The length of the vector is not greater than 1")
+  }
+  vec_rescaled <- (x - min(x, na.rm = TRUE)) /
+    (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+  return(head(vec_rescaled, 20))
+}
+
+x <- c(1:85, NA)
+
+rescale_01(x)
+```
+
+Returning the first 20 values in the vector
+
+## **3.4 Performing a More Difficult Test**
+
+```{r}
+rescale_01(fish_data$length)
+
+fish_length <- ggplot(data = fish_data, mapping = aes(x = length)) +
+  geom_bar() +
+  labs(title = "Frequency of Fish Obeservations by Length") +
+  theme_light(base_size = 10) 
+
+fish_length_scaled <- ggplot(data = fish_data, mapping = aes(x = rescale_01(length))) +
+  geom_bar() +
+  labs(title = "Frequency of Fish Obeservations by Scaled Length", x = "scaled length") +
+  theme_light(base_size = 10)
+
+grid.arrange(fish_length, fish_length_scaled, nrow = 2)
+```
+
+citation for grid.arrange:
+
+http://www.sthda.com/english/wiki/wiki.php?id_contents=7930
+
+## **3.5 Incorportaing Variables**
+
+Suppose you would like to make a more general `rescale_column()` function that perform operations on any variable within a dataset. Ideally, your function would take a dataframe and a variable name as inputs and return a dataframe where the variable has been rescaled.
+
+```{r}
+rescale_column <- function(df, var) {
+  df <- df |>
+    mutate(across(.cols = {{var}},
+                  .fns = ~rescale_01(.x)
+                  )
+           )
+  return()
+}
+```
+
+## **3.6 Another Function Test**
+
+Alright, now let's put your `rescale_column()` function to work! Use your `rescale_column()` function to rescale **both** the `length` and `weight` columns.
+
+```{r}
+rescale_column(fish_data, c(length, weight))
+```
+
+Returning the first 10 rows of the dataframe

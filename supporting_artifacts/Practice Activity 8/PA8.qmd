@@ -1,0 +1,209 @@
+---
+title: "Practice Activity 8: The 12 Days of Christmas"
+author: "Trenton Tadaki"
+format:
+  html: 
+    self-contained: true
+    code-tools: true
+    code-fold: true
+execute: 
+  echo: true
+  error: true
+  message: false
+  warning: false
+---
+
+```{r packages}
+#| include: false
+library(dplyr)
+library(glue)
+library(stringr)
+library(purrr)
+library(english)
+
+```
+
+### A Test Dataset
+
+Run the code below to load up a dataset called `xmas` that contains the crucial information about the gifts in the song. We will use this dataset to test out our functions as we work on them.
+
+```{r}
+xmas <- read.csv("https://www.dropbox.com/s/e584pryn8evm1gz/xmas.csv?dl=1")
+  
+```
+
+## Step One: Plurals
+
+Note that the gifts are listed in singular: for example, on day five the narrator receives "five golden rings", but the entry in the dataset for the gift on day five simply says "ring".
+
+Using the skeleton of the `pluralize_gift()` function, complete the code so that the function takes a gift and returns the appropriate plural.
+
+```{r pluralize-function}
+# Function that takes a noun and makes it plural
+# Arguments -- gift -- A string or vector of strings
+# Return -- A string or vector of strings with the pluralized words
+
+pluralize_gift <- function(gift){
+  if(str_detect(gift, "oo")){
+    gift <- gift |>
+      str_replace("oo", "ee")
+  } else{
+    gift <- gift |>
+      str_c("s", sep = "") |>
+      str_replace("ys$", "ies")
+  }
+  return(gift)
+}
+
+```
+
+### Test Your Function
+
+Try your function out on the smaller and then larger gift dataset. Consider: is your function *vectorized*? It does not have to be, but you can try it out if you want!
+
+```{r pluralize-test}
+## This will work if your function is vectorized!
+#pluralize_gift(xmas$Gift.Item)
+
+## This will work if your function is not vectorized!
+purrr::map_chr(xmas$Gift.Item, pluralize_gift)
+
+```
+
+## Step Two: Creating sentences
+
+Write a function called `make_phrase()` that takes as input the necessary information, and returns a phrase. For example,
+
+    make_phrase(num_word = "ten", 
+                item = "lords", 
+                verb = "a-leaping", 
+                adjective = "", 
+                location = "")
+
+should return
+
+    "ten lords a-leaping"
+
+```{r phrase-function}
+
+make_phrase <- function(day, num_word, item, verb, adjective, location) {
+  
+  ## Step 1: Replace NAs with blank strings
+  verb <- str_replace_na(verb, "")
+  adjective <- str_replace_na(adjective, "")
+  location <- str_replace_na(location, "")
+  
+  ## Step 2: If the day is larger than 1, the items need pluralized! 
+  if(day > 1) {
+    item <- pluralize_gift(item)
+    }
+  
+  ## Step 3: If the day is 1, you need to add an "a" or "an" before the gift 
+  else if(str_detect(item, pattern = "^[aeiou]")) {
+    num_word = "an"
+    } else {
+      num_word = "a"
+    }
+  
+  ## Step 4: Glue all of the pieces together to make a phrase! 
+  return(str_squish(glue("{num_word} {adjective} {item} {verb} {location}")))
+}
+```
+
+### Test Your Function
+
+Try your function out on the `xmas` data, by making a new variable containing the daily phrases. Notice I've provided you with the starter code to use `pmap_chr()` to iterate through each row of the dataset to create a phrase.
+
+::: callout-tip
+Look up the help file for `pmap_chr()` -- what is specified in the `list()`? How does that translate into what your `make_phrase()` function needs as inputs?
+:::
+
+```{r}
+xmas2 <- xmas |>
+  mutate(
+    num_word = as.character(english(Day)),
+    Full.Phrase = pmap_chr(.l = list(
+      day = Day, 
+      num_word = num_word,
+      item = Gift.Item, 
+      verb = Verb, 
+      adjective = Adjective, 
+      location = Location), 
+      .f = make_phrase)
+         )
+
+xmas2$Full.Phrase
+```
+
+## **1 Step Three: Iteration.**
+
+Write a function called `sing_day()` that takes as input:
+
+-   A dataset (input as a dataframe)
+
+-   A number indicating which day to sing about (input as an integer)
+
+-   The name of a column in the dataset that contains the phrases for each day (input as an **tidy** name)
+
+For example,
+
+    sing_day(xmas2, 2, Full.Phrase)
+
+should return
+
+    On the second day of Christmas, my true love sent to me:
+    two turtle doves and
+    a partridge in a pear tree.
+
+```{r}
+# Produces the string for one day of the song.
+# Arguments -- dataset: A data frame containing information about gifts
+# Arguments -- line: The number of the line for the day you want to sing about
+# Arguments -- phrase_col: The variable name for the column in the dataset that contains the song phrases
+# Return -- A string singing the line of the song with all gifts for the given day.
+
+sing_line <- function(dataset, line, phrase_col){
+  
+  # Step 1: Setup the intro line
+
+  num_word <- ordinal(line)
+  
+  intro <- glue::glue("On the {num_word} day of Christmas, my true love sent to me:")
+  
+  # Step 2: Sing the gift phrases
+
+  phrases <- dataset |>
+    pull( {{phrase_col}} ) |>
+    head(line) |>
+    rev() |>
+    str_c(collapse = ",\n")
+    
+  ## put it together
+    
+  return(glue::glue("{intro}\n{phrases}.\n\n"))
+}
+
+```
+
+Test:
+
+```{r}
+xmas2 |>
+sing_line(line = 2, phrase_col = Full.Phrase)
+```
+
+## **2 Step Four: Use Your Functions!**
+
+Now that you've written your `sing_line()` function, it is time to use it to sing the entire 12 Days of Christmas song. To do this, you will need to iterate over each day of the 12 days, to obtain the lyrics for that day.
+
+Note: I was not able to figure out how to include the "and" right before the last line in each iteration.
+
+```{r}
+song_all <- map_chr(.x = 1:12,
+        .f = ~sing_line(dataset = xmas2, 
+                       line = .x,
+                       phrase_col = Full.Phrase)
+)
+
+cat(song_all)
+```

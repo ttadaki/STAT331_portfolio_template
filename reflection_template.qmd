@@ -22,17 +22,17 @@ execute:
 -   `csv`
 
 ```{r wd-1-csv}
+#Lab 2 Set-up
+
 surveys <- read_csv(here("Week 2", "Lab 2", "surveys.csv"))
 ```
 
 -   `xlsx`
 
 ```{r wd-1-xlsx}
-library(readxl) 
-library(tidyverse)
+#Practice Activity 3 Q1
 
-military <- read_xlsx(here::here("data", 
-                                 "gov_spending_per_capita.xlsx"), 
+military <- read_xlsx(here::here("data",                              "gov_spending_per_capita.xlsx"), 
                       sheet = "Share of Govt. spending", 
                       skip = 7, 
                       nmax = 190)
@@ -41,20 +41,19 @@ military <- read_xlsx(here::here("data",
 -   `txt`
 
 ```{r wd-1-txt}
-library(tidyverse)
+#Practice Activity 5.2 Set-up
 
 message <- read_csv(here::here("Week 5", 
                                  "Practice Activity 5.2", 
                                  "scrambled_message.txt")
                       )
-word <- message %>% 
-  pull(Word)
 ```
 
 **WD-2: I can select necessary columns from a dataset.**
 
 ```{r wd-2}
 #Challenge 4
+
 avocado_new <- avocado_clean |>
   semi_join(y = cali_regions, by = 'region') |>
   mutate('Avo_sales_USD' = AveragePrice * `Total Volume`,
@@ -63,22 +62,6 @@ avocado_new <- avocado_clean |>
   select(month, Avo_sales_USD, region) |>
   group_by(region, month) |>
   summarise(Avo_sales_USD = sum(Avo_sales_USD))
-  
-
-housing_prices <- housing_prices_og |>
-  pivot_longer("2015-01-31" : "2018-03-31",
-             names_to = "Date",
-             values_to = "Avg_house_price") |>
-  filter(State == "CA") |>
-  mutate('region' =
-           str_replace(RegionName,
-                       " ", 
-                       ""),
-         'Date' = as.Date(Date),
-         'month' = floor_date(Date, 'month')) |>
-  select(region, month, Avg_house_price) |>
-  right_join(cali_regions) |>
-  drop_na() 
 ```
 
 **WD-3: I can filter rows from a dataframe for a *variety* of data types (e.g., numeric, integer, character, factor, date).**
@@ -87,6 +70,7 @@ housing_prices <- housing_prices_og |>
 
 ```{r wd-3-numeric}
 #Lab 3 Q11
+
 hiphop_clean |>
   filter(age < 20) |>
   group_by(word) |>
@@ -98,19 +82,13 @@ hiphop_clean |>
 
 ```{r wd-3-string}
 #Lab 3 Q12
-hiphop_clean |>
-  filter(ethnic == 'non-white',
-         sex == 'Female') |>
-  group_by(word) |>
-  summarize(mean_fam = mean(as.numeric(familiarity))) |>
-  slice_min(mean_fam)
 
 hiphop_clean |>
   filter(ethnic == 'non-white',
          sex == 'Female') |>
   group_by(word) |>
   summarize(mean_fam = mean(as.numeric(familiarity))) |>
-  slice_max(mean_fam)
+  slice_min(mean_fam)
 ```
 
 -   factor
@@ -139,6 +117,7 @@ ggplot(data = rodent_data, mapping = aes(x = week_day_end)) +
 
 ```{r wd-3-date}
 #Challenge 4
+
 avocado_new <- avocado_clean |>
   semi_join(y = cali_regions, by = 'region') |>
   mutate('Avo_sales_USD' = AveragePrice * `Total Volume`,
@@ -210,6 +189,7 @@ ggplot(data = avo_house) +
 
 ```{r wd-4-string}
 #Practice Activity 5.2 Q4
+
 hiphop_clean <- hiphop_clean |>
   mutate(
     ethnic = if_else(ethnic == 'white',
@@ -221,6 +201,7 @@ hiphop_clean <- hiphop_clean |>
 
 ```{r wd-4-factor}
 #Lab 5 Time Series Plot Q1
+
 rodent_data <- surveys |>
   filter(taxa == 'Rodent') |>
   mutate(days_of_week = factor(wday(date, label = TRUE), 
@@ -240,6 +221,7 @@ rodent_data <- surveys |>
 
 ```{r wd-4-date}
 #Lab 5 Time-Series Plot Q3
+
 genus_weight <- surveys |>
   group_by(genus) |>
   mutate(year = year(date)) |>
@@ -257,21 +239,15 @@ ggplot(data = genus_weight, mapping = aes(x = year, y = weight)) +
 -   `left_join()`
 
 ```{r wd-5-left}
+#Preview Activity 4.3 Q1
 
+left_join(prof_info, prof_course)
 ```
 
 -   `right_join()`
 
 ```{r wd-5-right}
 #Challenge 4
-avocado_new <- avocado_clean |>
-  semi_join(y = cali_regions, by = 'region') |>
-  mutate('Avo_sales_USD' = AveragePrice * `Total Volume`,
-         'Date' = as.Date(Date),
-         'month' = floor_date(Date, 'month')) |>
-  select(month, Avo_sales_USD, region) |>
-  group_by(region, month) |>
-  summarise(Avo_sales_USD = sum(Avo_sales_USD))
 
 housing_prices <- housing_prices_og |>
   pivot_longer("2015-01-31" : "2018-03-31",
@@ -287,44 +263,20 @@ housing_prices <- housing_prices_og |>
   select(region, month, Avg_house_price) |>
   right_join(cali_regions) |>
   drop_na() 
-
-avo_house <- housing_prices |>
-  full_join(avocado_new, by = c('region', 'month'))
 ```
 
 -   `inner_join()`
 
 ```{r wd-5-inner}
+#Preview Activity 4.3 Q1
 
+inner_join(prof_info, prof_course)
 ```
 
 -   `full_join()`
 
 ```{r wd-5-full}
 #Challenge 4
-avocado_new <- avocado_clean |>
-  semi_join(y = cali_regions, by = 'region') |>
-  mutate('Avo_sales_USD' = AveragePrice * `Total Volume`,
-         'Date' = as.Date(Date),
-         'month' = floor_date(Date, 'month')) |>
-  select(month, Avo_sales_USD, region) |>
-  group_by(region, month) |>
-  summarise(Avo_sales_USD = sum(Avo_sales_USD))
-
-housing_prices <- housing_prices_og |>
-  pivot_longer("2015-01-31" : "2018-03-31",
-             names_to = "Date",
-             values_to = "Avg_house_price") |>
-  filter(State == "CA") |>
-  mutate('region' =
-           str_replace(RegionName,
-                       " ", 
-                       ""),
-         'Date' = as.Date(Date),
-         'month' = floor_date(Date, 'month')) |>
-  select(region, month, Avg_house_price) |>
-  right_join(cali_regions) |>
-  drop_na() 
 
 avo_house <- housing_prices |>
   full_join(avocado_new, by = c('region', 'month'))
@@ -336,6 +288,7 @@ avo_house <- housing_prices |>
 
 ```{r wd-6-semi}
 #Lab 4 Q3
+
 avocado_clean |>
   semi_join(y = regions_major, by = 'region') |>
   filter(year == 2017,
@@ -349,6 +302,7 @@ avocado_clean |>
 
 ```{r wd-6-anti}
 #Lab 4 Q5
+
 top5metro <- avocado_clean |>
   anti_join(y = regions_other, by = 'region')|>
   group_by(region) |>
@@ -363,6 +317,7 @@ top5metro <- avocado_clean |>
 
 ```{r wd-7-long}
 #Lab 4 Q7
+
 avocado_cali_size <- avocado_cali |>
   select(c('Small_Medium',
            'Large', 
@@ -376,17 +331,6 @@ avocado_cali_size <- avocado_cali |>
            Size,
            type) |>
   summarise(volume_sold = sum(Volume)) 
-  
-ggplot(data = avocado_cali_size, 
-       mapping = aes(x = region,
-                     y = volume_sold,
-                     fill = Size)) +
-  geom_col(position = "fill") +
-  facet_wrap(. ~ type) +
-  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
-  labs(x = "Region of CA",
-       y = "Proportion of Mean Avocados Sold") +
-  theme_grey(base_size = 14)
 ```
 
 -   `pivot_wider()`
@@ -394,25 +338,9 @@ ggplot(data = avocado_cali_size,
 ```{r wd-7-wide}
 #Lab 4 Q6
 
-cali_regions <- tibble(region = c("LosAngeles", "SanDiego", "Sacramento", "SanFrancisco"))
-
-avocado_cali <- avocado_clean |>
-  semi_join(y = cali_regions, by = 'region')
-
-avocado_avg <- avocado_cali |>
-  group_by(type, region) |>
-  summarise(mean_price = mean(AveragePrice)) 
-
 avocado_price_diff <- avocado_avg |>
   pivot_wider(names_from = type, values_from = mean_price) |>
   mutate(price_diff = organic - conventional)
-
-avocado_price_diff[c(1,4)]
-
-ggplot(data = avocado_avg, mapping = aes(x = mean_price, y = region)) +
-  geom_point(aes(color = type)) +
-  labs(title = 'Conventional vs Organic Avocados in California Regions', x = 'Average USD price per Avocado') +
-  theme_grey(base_size = 14)
 ```
 
 ## Reproducibility
@@ -427,6 +355,7 @@ I've done this in the following provided assignments:
 
 ```{r r-2-1}
 #Lab 4 Cleaning the Data
+
 avocado_clean <- avocado |>
   rename("Small_Medium" = "4046", 
          "Large" = "4225",
@@ -452,6 +381,7 @@ regions_other <- tibble(region = c("California",
 
 ```{r r-2-2}
 #Lab 4 Q7
+
 avocado_cali_size <- avocado_cali |>
   select(c('Small_Medium',
            'Large', 
@@ -484,6 +414,7 @@ ggplot(data = avocado_cali_size,
 
 ```{r r-3-1}
 #Lab 4 Q7
+
 avocado_cali_size <- avocado_cali |>
   select(c('Small_Medium',
            'Large', 
@@ -531,6 +462,7 @@ ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
 
 ```{r dvs-1-num}
 #Lab 2 Q6
+
 ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) +
   geom_jitter(alpha = 0.3)
 ```
@@ -539,6 +471,7 @@ ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) +
 
 ```{r dvs-2-num-cat}
 #Challenge 4
+
 avocado_new <- avocado_clean |>
   semi_join(y = cali_regions, by = 'region') |>
   mutate('Avo_sales_USD' = AveragePrice * `Total Volume`,
@@ -577,6 +510,7 @@ ggplot(data = avo_house) +
 
 ```{r dvs-2-cat}
 #Lab 2 Q4
+
 ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(alpha = 0.1, color = 'cadetblue') +
@@ -588,6 +522,7 @@ ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
 
 ```{r dvs-2-date}
 #Lab 5 Time-Series Q3
+
 genus_weight <- surveys |>
   group_by(genus) |>
   mutate(year = year(date)) |>
@@ -605,6 +540,7 @@ ggplot(data = genus_weight, mapping = aes(x = year, y = weight)) +
 
 ```{r dvs-2-1}
 #Lab 2 Q4
+
 ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(alpha = 0.1, color = 'cadetblue') +
@@ -616,13 +552,13 @@ ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
 
 ```{r dvs-2-2}
 #Lab 4 Q5
+
 top5metro <- avocado_clean |>
   anti_join(y = regions_other, by = 'region')|>
   group_by(region) |>
   summarise(mean_vol = mean(`Total Volume`)) |>
   arrange(desc(mean_vol)) |>
   slice(1:5)
-
 
 avocado_clean |>
   semi_join(y = top5metro, by = 'region') |>
@@ -640,6 +576,7 @@ avocado_clean |>
 
 ```{r dvs-3-1}
 #Lab 2 Q13
+
 ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(alpha = 0.1, color = 'cadetblue') +
@@ -651,6 +588,7 @@ ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
 
 ```{r dvs-3-2}
 #Lab 5 Time Series Q5
+
 week_day_end <- 
   fct_collapse(rodent_data$days_of_week, 
                "Weekday" = c("Mon", 
@@ -674,6 +612,7 @@ ggplot(data = rodent_data, mapping = aes(x = week_day_end)) +
 
 ```{r dvs-4-1}
 #Lab 3 Q12
+
 hiphop_clean |>
   filter(ethnic == 'non-white',
          sex == 'Female') |>
@@ -721,7 +660,6 @@ avocado_clean |>
 hiphop_artists <- hiphop_clean |>
   select(subj, sex, ethnic, intl:unclassifiable) |>
   distinct(subj, .keep_all = TRUE)
-
 
 #Male versus Female
 hiphop_artists |>
@@ -777,16 +715,6 @@ avocado_clean |>
 ```{r dvs-6-1}
 #Challenge 4
 
-avocado_new <- avocado_clean |>
-  semi_join(y = cali_regions, by = 'region') |>
-  mutate('Avo_sales_USD' = AveragePrice * `Total Volume`,
-         'Date' = as.Date(Date),
-         'month' = floor_date(Date, 'month')) |>
-  select(month, Avo_sales_USD, region) |>
-  group_by(region, month) |>
-  summarise(Avo_sales_USD = sum(Avo_sales_USD))
-  
-
 housing_prices <- housing_prices_og |>
   pivot_longer("2015-01-31" : "2018-03-31",
              names_to = "Date",
@@ -809,31 +737,19 @@ avo_house <- housing_prices |>
 -   Example 2
 
 ```{r dvs-6-2}
-#Lab 4 Q7
+#Lab 9 Q10
 
-avocado_cali_size <- avocado_cali |>
-  select(c('Small_Medium',
-           'Large', 
-           'Extra Large', 
-           'type', 
-           'region')) |>
-  pivot_longer(Small_Medium : `Extra Large`,
-               names_to = "Size",
-               values_to = "Volume") |>
-  group_by(region, 
-           Size,
-           type) |>
-  summarise(volume_sold = sum(Volume)) 
-  
-ggplot(data = avocado_cali_size, 
-       mapping = aes(x = region,
-                     y = volume_sold,
-                     fill = Size)) +
-  geom_col(position = "fill") +
-  facet_wrap(. ~ type) +
-  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
-  labs(x = "Region of CA", y = "Proportion of Mean Avocados Sold") +
-  theme_grey(base_size = 14)
+Aln_prop <- StateNames_A |>
+  filter(Name %in% c('Allan', 'Alan', 'Allen'),
+           Year == 2000,
+           State %in% c('CA', 'PA')
+         ) |>
+  group_by(Name, State) |>
+  summarize(total_count = sum(Count)) |>
+  group_by(State) |>
+  mutate(Prop = total_count / sum(total_count)) |>
+  select(Name, State, Prop) |>
+  pivot_wider(names_from = Name, values_from = Prop)
 ```
 
 **DVS-7: I show creativity in my tables.**
@@ -842,15 +758,6 @@ ggplot(data = avocado_cali_size,
 
 ```{r dvs-7-1}
 #Challenge 4
-avocado_new <- avocado_clean |>
-  semi_join(y = cali_regions, by = 'region') |>
-  mutate('Avo_sales_USD' = AveragePrice * `Total Volume`,
-         'Date' = as.Date(Date),
-         'month' = floor_date(Date, 'month')) |>
-  select(month, Avo_sales_USD, region) |>
-  group_by(region, month) |>
-  summarise(Avo_sales_USD = sum(Avo_sales_USD))
-  
 
 housing_prices <- housing_prices_og |>
   pivot_longer("2015-01-31" : "2018-03-31",
@@ -874,22 +781,20 @@ avo_house <- housing_prices |>
 -   Example 2
 
 ```{r dvs-7-2}
-#Lab 4 Q6
+#Challenge 9 Q10
 
-cali_regions <- tibble(region = c("LosAngeles", "SanDiego", "Sacramento", "SanFrancisco"))
-
-avocado_cali <- avocado_clean |>
-  semi_join(y = cali_regions, by = 'region')
-
-avocado_avg <- avocado_cali |>
-  group_by(type, region) |>
-  summarise(mean_price = mean(AveragePrice)) 
-
-avocado_price_diff <- avocado_avg |>
-  pivot_wider(names_from = type, values_from = mean_price) |>
-  mutate(price_diff = organic - conventional)
-
-avocado_price_diff[c(1,4)]
+Aln_prop |> 
+  kable(format = "html",
+        digits = 3,
+        col.names = 
+          c("State", 
+            "Alan", 
+            "Allan",
+            "Allen"),
+        caption = "Proportions of Different Spellings of 'Allen' per State") |>
+  kable_classic(html_font = "Ariel",
+                font_size = 18) |>
+  row_spec(0, bold = TRUE)
 ```
 
 ## Program Efficiency
@@ -899,6 +804,141 @@ avocado_price_diff[c(1,4)]
 -   using a single function call
 
 ```{r pe-1-one-call}
+#Lab 8 Step 3
+
+sing_line <- function(dataset, line, phrase_col){
+  num_word <- ordinal(line)
+  intro <- glue::glue("On the {num_word} day of Christmas, my true love sent to me:")
+  phrases <- dataset |>
+    pull( {{phrase_col}} ) |>
+    head(line) |>
+    rev() |>
+    str_c(collapse = ",\n")
+  return(glue::glue("{intro}\n{phrases}.\n\n"))
+}
+
+xmas2 |>
+sing_line(line = 2, phrase_col = Full.Phrase)
+```
+
+-   `across()`
+
+```{r pe-1-across}
+#Lab 7 Q5
+
+rescale_column <- function(df, var) {
+  df <- df |>
+    mutate(across(.cols = {{var}},
+                  .fns = ~rescale_01(.x)
+                  )
+           )
+  return()
+}
+```
+
+-   `map()` functions
+
+```{r pe-1-map-1}
+#Lab 8 Step 4
+
+song_all <- map_chr(.x = 1:12,
+        .f = ~sing_line(dataset = xmas2, 
+                       line = .x,
+                       phrase_col = Full.Phrase)
+)
+```
+
+**PE-2: I can write functions to reduce repetition in my code.**
+
+-   Example 1
+
+```{r pe2-1}
+#Lab 8 Step 2
+
+make_phrase <- function(day, num_word, item, verb, adjective, location) {
+  verb <- str_replace_na(verb, "")
+  adjective <- str_replace_na(adjective, "")
+  location <- str_replace_na(location, "")
+  if(day > 1) {
+    item <- pluralize_gift(item)
+    }
+  else if(str_detect(item, pattern = "^[aeiou]")) {
+    num_word = "an"
+    } else {
+      num_word = "a"
+    }
+  return(str_squish(glue("{num_word} {adjective} {item} {verb} {location}")))
+}
+```
+
+-   Example 2
+
+```{r pe2-2}
+#Lab 7 Q3
+
+rescale_01 <- function(x) {
+  stopifnot(is.numeric(x))
+  if(length(x) <= 1){
+    stop("The length of the vector is not greater than 1")
+  }
+  vec_rescaled <- (x - min(x, na.rm = TRUE)) /
+    (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+  return(head(vec_rescaled, 20))
+}
+```
+
+**PE-3:I can use iteration to reduce repetition in my code.**
+
+-   `across()`
+
+```{r pe-3-across}
+#Lab 7 Q5
+
+rescale_column <- function(df, var) {
+  df <- df |>
+    mutate(across(.cols = {{var}},
+                  .fns = ~rescale_01(.x)
+                  )
+           )
+  return()
+}
+```
+
+-   `map()` functions (Provide 2 Examples)
+
+```{r pe-3-map-1}
+#Lab 8 Step 4
+
+song_all <- map_chr(.x = 1:12,
+        .f = ~sing_line(dataset = xmas2, 
+                       line = .x,
+                       phrase_col = Full.Phrase)
+)
+```
+
+```{r pe-3-map-2}
+#Practice Activity 8 Step 2
+
+xmas2 <- xmas |>
+  mutate(
+    num_word = as.character(english(Day)),
+    Full.Phrase = pmap_chr(.l = list(
+      day = Day, 
+      num_word = num_word,
+      item = Gift.Item, 
+      verb = Verb, 
+      adjective = Adjective, 
+      location = Location), 
+      .f = make_phrase)
+         )
+
+```
+
+**PE-4: I can use modern tools when carrying out my analysis.**
+
+-   Example 1
+
+```{r pe-4-1}
 #Lab 4 Q7
 
 avocado_cali_size <- avocado_cali |>
@@ -914,130 +954,39 @@ avocado_cali_size <- avocado_cali |>
            Size,
            type) |>
   summarise(volume_sold = sum(Volume)) 
-  
-ggplot(data = avocado_cali_size, 
-       mapping = aes(x = region,
-                     y = volume_sold,
-                     fill = Size)) +
-  geom_col(position = "fill") +
-  facet_wrap(. ~ type) +
-  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
-  labs(x = "Region of CA", y = "Proportion of Mean Avocados Sold") +
-  theme_grey(base_size = 14)
-```
-
--   `across()`
-
-```{r pe-1-across}
-#Challenge 3
-
-hiphop_artists <- hiphop_clean |>
-  select(subj, sex, ethnic, intl:unclassifiable) |>
-  distinct(subj, .keep_all = TRUE)
-
-#Male versus Female
-hiphop_artists |>
-  group_by(sex) |>
-  summarise(
-    across(
-      intl:unclassifiable, mean)) |>
-  summarise(
-    across(
-      intl:unclassifiable, diff)) |>
-  abs() |>
-  which.max()
-
-#White versus Non-white
-hiphop_artists |>
-  group_by(ethnic) |>
-  summarise(
-    across(
-      intl:unclassifiable, mean)) |>
-  summarise(
-    across(
-      intl:unclassifiable, diff))|>
-  abs() |>
-  which.max()
-```
-
--   `map()` functions
-
-```{r pe-1-map-1}
-
-```
-
-**PE-2: I can write functions to reduce repetition in my code.**
-
--   Example 1
-
-```{r pe2-1}
-
-```
-
--   Example 2
-
-```{r pe2-2}
-
-```
-
-**PE-3:I can use iteration to reduce repetition in my code.**
-
--   `across()`
-
-```{r pe-3-across}
-#Challenge 3
-hiphop_artists <- hiphop_clean |>
-  select(subj, sex, ethnic, intl:unclassifiable) |>
-  distinct(subj, .keep_all = TRUE)
-
-
-#Male versus Female
-hiphop_artists |>
-  group_by(sex) |>
-  summarise(
-    across(
-      intl:unclassifiable, mean)) |>
-  summarise(
-    across(
-      intl:unclassifiable, diff)) |>
-  abs() |>
-  which.max()
-
-#White versus Non-white
-hiphop_artists |>
-  group_by(ethnic) |>
-  summarise(
-    across(
-      intl:unclassifiable, mean)) |>
-  summarise(
-    across(
-      intl:unclassifiable, diff))|>
-  abs() |>
-  which.max()
-```
-
--   `map()` functions (Provide 2 Examples)
-
-```{r pe-3-map-1}
-
-```
-
-```{r pe-3-map-2}
-
-```
-
-**PE-4: I can use modern tools when carrying out my analysis.**
-
--   Example 1
-
-```{r pe-4-1}
-
 ```
 
 -   Example 2
 
 ```{r pe-4-2}
+#Challenge 4
 
+avocado_new <- avocado_clean |>
+  semi_join(y = cali_regions, by = 'region') |>
+  mutate('Avo_sales_USD' = AveragePrice * `Total Volume`,
+         'Date' = as.Date(Date),
+         'month' = floor_date(Date, 'month')) |>
+  select(month, Avo_sales_USD, region) |>
+  group_by(region, month) |>
+  summarise(Avo_sales_USD = sum(Avo_sales_USD))
+
+housing_prices <- housing_prices_og |>
+  pivot_longer("2015-01-31" : "2018-03-31",
+             names_to = "Date",
+             values_to = "Avg_house_price") |>
+  filter(State == "CA") |>
+  mutate('region' =
+           str_replace(RegionName,
+                       " ", 
+                       ""),
+         'Date' = as.Date(Date),
+         'month' = floor_date(Date, 'month')) |>
+  select(region, month, Avg_house_price) |>
+  right_join(cali_regions) |>
+  drop_na() 
+
+avo_house <- housing_prices |>
+  full_join(avocado_new, by = c('region', 'month'))
 ```
 
 ## Data Simulation & Modeling
@@ -1047,13 +996,32 @@ hiphop_artists |>
 -   Example 1
 
 ```{r dsm-1-1}
+#Lab 9 Q3
 
+allison_f_year <- allison_f |> 
+  group_by(State) |>
+  replace_na(list('Count' = 0)) |>
+  select(Year, State, Count)
+
+ggplot(data = allison_f_year, mapping = aes(x = Year, y = Count)) +
+  geom_jitter(alpha = 0.3, color = 'tomato') +
+  labs(title = "Number of Allisons in State over Time")
 ```
 
 -   Example 2
 
 ```{r dsm-1-2}
+#Practice Activity 9.2 Q3
 
+my_model_2 <- penguins |>
+  lm(bill_length_mm ~ bill_depth_mm*species, data = _)
+
+penguins |>
+  ggplot(aes(x = bill_depth_mm, y = bill_length_mm)) +
+  geom_point(aes(color = species)) +
+  stat_smooth(method = "lm") + 
+  labs(x = "Bill Depth (mm)", 
+       y = "Bill Length (mm)")
 ```
 
 **DSM-2: I can fit a linear regression and extract necessary summary measures.**
@@ -1061,45 +1029,38 @@ hiphop_artists |>
 -   Example 1
 
 ```{r dsm-2-1}
+#Lab 9 Q4
 
+allison_lm <- lm(Count ~ Year, data = allison_f)
+
+#Lab 9 Q5
+
+tidy(allison_lm)
 ```
 
 -   Example 2
 
 ```{r dsm-2-2}
+#Practice Activity 9.2 Q3
 
+my_model <- penguins |>
+  lm(bill_length_mm ~ bill_depth_mm, data = _)
+
+broom::tidy(my_model)
+
+broom::glance(my_model)
 ```
 
 ## Revising My Thinking
 
-<!-- How did you revise your thinking throughout the course? How did you revise your thinking on the code examples you have provided in your portfolio? -->
+Every time I receive feedback on my assignments, I return to such assignment and look at the spots in which I can improve. So far, for the assignments I have had to revise, I completed them promptly and with intention. Additionally, after we do practice activities in groups, I often redo the assignment when I get home to see if I can complete the problems without help.
 
 ## Extending My Thinking
 
-<!-- How did you extended your thinking throughout the course? How did you extend your thinking on the code examples you have provided in your portfolio? -->
+I make an effort to go above and beyond during my assignments by researching ways to make my data visualizations easier to read or using outside sources to optimize my code. An example of this is in Lab 4, I researched ways to use the Date datatype and its functions in order to make the rest of the assignment easier to follow and write code for. I also earned a token for my Lab 2 for using side-by-side boxplots with dodged axis labels and transparent jittered points when such elements were not required.
 
 ## Peer Support & Collaboration
 
-<!-- Include an image of feedback you gave that you are proud of (either in a peer review or in Discord) -->
-
-**Learning Targets:**
-
-Upon completing this past week's lab with far less help than in previous weeks, I realized that my understanding of the course objectives has much improved. I have been able to perform and conceptually understand all of the "Working with Data" skills needed for my assignments thus far. Additionally, I have been able to visualize my data creatively and effectively, even earning an extra credit token for going above and beyond. I don't have as much experience with showing creativity in my tables, but my skills have been proficient enough to be successful in my assignments. As for my ability to create reproducible and efficient code, I have become habituated to using proper documentation and identifying code that is not concise, and I constantly strive to improve my program's resistance to changes in inputs. I am also confident in my use of pipe operators. Though, I still need to learn how to write functions and use iterations in my code. For the "Data Simulation and Modeling" Objective, I have a fair amount of prior knowledge on how to simulate probability models and perform linear regression in R, but I understand that I still have a lot to learn in this class.
-
-\
-
-**Revising my Thinking:**
-
-Every time I receive feedback on my assignments, I return to such assignment and look at the spots in which I can improve. The one assignment I have needed to revise, I completed promptly and with intention. Additionally, after we do practice activities in groups, I often redo the assignment when I get home to see if I can complete the problems without help.
-
-**Extending my Thinking:**
-
-I make an effort to go above and beyond during my assignments by researching ways to make my data visualizations easier to read or using outside sources to optimize my code. An example of this is in Lab 4, I researched ways to use the Date datatype and its functions in order to make the rest of the assignment easier to follow and write code for. I also earned a token for my Lab 2 for using side-by-side boxplots with dodged axis labels and transparent jittered points when such elements were not required.
-
-\
-
-**Peer Support and Collaboration:**
-
-During the beginning of this class, I felt unsure about my ability to meaningfully contribute to group work, since I was under the assumption that I had much less coding experience in comparison to the other students in the class. However, I have since much grown not just in my coding abilities but in my leadership abilities. In my respective roles, I have maintained high engagement while encouraging participation by the other members in my group, and I also always take my peer-code reviews seriously. I make a thorough attempt to critique my partner's code, even when it is difficult to find style suggestions. I also spend every friday working alongside a peer in the class so that we share accountability and can teach each other when we do not fully understand a concept.
+![](images/image-398216622.png)
 
 \
