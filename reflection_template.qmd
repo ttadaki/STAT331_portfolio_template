@@ -59,8 +59,11 @@ avocado_new <- avocado_clean |>
   mutate('Avo_sales_USD' = AveragePrice * `Total Volume`,
          'Date' = as.Date(Date),
          'month' = floor_date(Date, 'month')) |>
-  select(month, Avo_sales_USD, region) |>
-  group_by(region, month) |>
+  select(month,
+         Avo_sales_USD, 
+         region) |>
+  group_by(region, 
+           month) |>
   summarise(Avo_sales_USD = sum(Avo_sales_USD))
 ```
 
@@ -81,6 +84,16 @@ hiphop_clean |>
 -   character -- specifically a string
 
 ```{r wd-3-string}
+#Practice Activity 5.2 Q2
+
+message |> 
+  filter(str_detect(Word, pattern = "\\w")) |> 
+  count() 
+```
+
+-   factor
+
+```{r wd-3-factor}
 #Lab 3 Q12
 
 hiphop_clean |>
@@ -91,57 +104,18 @@ hiphop_clean |>
   slice_min(mean_fam)
 ```
 
--   factor
-
-```{r wd-3-factor}
-#Lab 5 Time Series Plot Q3
-
-week_day_end <- 
-  fct_collapse(rodent_data$days_of_week, 
-               "Weekday" = c("Mon", 
-                             "Tue", 
-                             "Wed", 
-                             "Thu", 
-                             "Fri"), 
-               "Weekend" = c("Sat", 
-                             "Sun"))
-
-ggplot(data = rodent_data, mapping = aes(x = week_day_end)) +
-  geom_bar(mapping = aes(fill = days_of_week)) +
-  scale_fill_brewer(palette = "Accent") |>
-  labs(title = "Rodents Captured (Weekend vs Weekdays)", x = "") +
-  theme_grey(base_size = 10)
-```
-
 -   date
 
 ```{r wd-3-date}
-#Challenge 4
+#Practice Activity 5.1 Q3
 
-avocado_new <- avocado_clean |>
-  semi_join(y = cali_regions, by = 'region') |>
-  mutate('Avo_sales_USD' = AveragePrice * `Total Volume`,
-         'Date' = as.Date(Date),
-         'month' = floor_date(Date, 'month')) |>
-  select(month, Avo_sales_USD, region) |>
-  group_by(region, month) |>
-  summarise(Avo_sales_USD = sum(Avo_sales_USD))
-  
-
-housing_prices <- housing_prices_og |>
-  pivot_longer("2015-01-31" : "2018-03-31",
-             names_to = "Date",
-             values_to = "Avg_house_price") |>
-  filter(State == "CA") |>
-  mutate('region' =
-           str_replace(RegionName,
-                       " ", 
-                       ""),
-         'Date' = as.Date(Date),
-         'month' = floor_date(Date, 'month')) |>
-  select(region, month, Avg_house_price) |>
-  right_join(cali_regions) |>
-  drop_na()
+suspects_clean <- suspects_clean |>
+  filter(Time.Spotted %within% 
+           interval(
+              start = time_start, 
+              end = time_end
+            )
+         )
 ```
 
 **WD-4: I can modify existing variables and create new variables in a dataframe for a *variety* of data types (e.g., numeric, integer, character, factor, date).**
@@ -156,82 +130,48 @@ avocado_new <- avocado_clean |>
   mutate('Avo_sales_USD' = AveragePrice * `Total Volume`,
          'Date' = as.Date(Date),
          'month' = floor_date(Date, 'month')) |>
-  select(month, Avo_sales_USD, region) |>
-  group_by(region, month) |>
+  select(month, 
+         Avo_sales_USD, 
+         region) |>
+  group_by(region,
+           month) |>
   summarise(Avo_sales_USD = sum(Avo_sales_USD))
-
-housing_prices <- housing_prices_og |>
-  pivot_longer("2015-01-31" : "2018-03-31",
-             names_to = "Date",
-             values_to = "Avg_house_price") |>
-  filter(State == "CA") |>
-  mutate('region' =
-           str_replace(RegionName,
-                       " ", 
-                       ""),
-         'Date' = as.Date(Date),
-         'month' = floor_date(Date, 'month')) |>
-  select(region, month, Avg_house_price) |>
-  right_join(cali_regions) |>
-  drop_na() 
-
-avo_house <- housing_prices |>
-  full_join(avocado_new, by = c('region', 'month'))
-
-ggplot(data = avo_house) +
-  geom_line(mapping = aes(x = month, y = Avg_house_price), color = "blue") +
-  geom_line(mapping = aes(x = month, y = Avo_sales_USD), color = "red") +
-  facet_wrap(~region, ncol = 2) +
-  ylab('USD')
 ```
 
 -   character -- specifically a string
 
 ```{r wd-4-string}
-#Practice Activity 5.2 Q4
+#Practice Activity 5.2 Part 2 Q4
 
-hiphop_clean <- hiphop_clean |>
-  mutate(
-    ethnic = if_else(ethnic == 'white',
-                     'white',
-                     'non-white'))
+word_clean <- word_clean |>
+      str_replace_all(pattern = "aa", 
+                      replace = "ee")
 ```
 
 -   factor
 
 ```{r wd-4-factor}
-#Lab 5 Time Series Plot Q1
+#Lab 5 Captures Over the Week Q3
 
-rodent_data <- surveys |>
-  filter(taxa == 'Rodent') |>
-  mutate(days_of_week = factor(wday(date, label = TRUE), 
-                               levels = c("Mon", 
-                                          "Tue", 
-                                          "Wed", 
-                                          "Thu", 
-                                          "Fri", 
-                                          "Sat", 
-                                          "Sun"))) |>
-  group_by(days_of_week) |>
-  na.omit()
+week_day_end <- 
+  fct_collapse(rodent_data$days_of_week, 
+               "Weekday" = c("Mon", 
+                             "Tue", 
+                             "Wed", 
+                             "Thu", 
+                             "Fri"), 
+               "Weekend" = c("Sat", 
+                             "Sun"))
 
 ```
 
 -   date
 
 ```{r wd-4-date}
-#Lab 5 Time-Series Plot Q3
+#Practice Activity 5.1
 
-genus_weight <- surveys |>
-  group_by(genus) |>
-  mutate(year = year(date)) |>
-  na.omit()
-
-ggplot(data = genus_weight, mapping = aes(x = year, y = weight)) +
-  geom_line(mapping = aes(color = genus)) +
-  labs(title = "Weight of Genus over time", y = "Weight in grams") +
-  theme_grey(base_size = 10)
-
+suspects_clean <- suspects |>
+  mutate(Time.Spotted = ymd_hms(Time.Spotted))
 ```
 
 **WD-5: I can use mutating joins to combine multiple dataframes.**
@@ -260,7 +200,9 @@ housing_prices <- housing_prices_og |>
                        ""),
          'Date' = as.Date(Date),
          'month' = floor_date(Date, 'month')) |>
-  select(region, month, Avg_house_price) |>
+  select(region,
+         month, 
+         Avg_house_price) |>
   right_join(cali_regions) |>
   drop_na() 
 ```
@@ -302,13 +244,13 @@ avocado_clean |>
 
 ```{r wd-6-anti}
 #Lab 4 Q5
+#revision: combined arrange+slice function into single slice_max function
 
 top5metro <- avocado_clean |>
   anti_join(y = regions_other, by = 'region')|>
   group_by(region) |>
   summarise(mean_vol = mean(`Total Volume`)) |>
-  arrange(desc(mean_vol)) |>
-  slice(1:5)
+  slice_max(n = 5, order_by = mean_vol)
 ```
 
 **WD-7: I can pivot dataframes from long to wide and visa versa**
@@ -349,45 +291,37 @@ avocado_price_diff <- avocado_avg |>
 
 I've done this in the following provided assignments:
 
+Lab 2, Lab 4, Lab 5
+
 **R-2: I can write well documented and tidy code.**
 
 -   Example 1
 
 ```{r r-2-1}
-#Lab 4 Cleaning the Data
+#Lab 2 Q13
 
-avocado_clean <- avocado |>
-  rename("Small_Medium" = "4046", 
-         "Large" = "4225",
-         "Extra Large" = "4770")
-
-regions_major <- tibble(region 
-                        = c("West",
-                            "Plains", 
-                            "Northeast",
-                            "Southeast",
-                            "SouthCentral",
-                            "Midsouth",
-                            "WestTexNewMexico",
-                            "NortherNewEngland"))
-
-regions_other <- tibble(region = c("California",
-                                  "SouthCarolina",
-                                  "GreatLakes",
-                                  "TotalUS"))
+ggplot(data = surveys, 
+       mapping = aes(x = species, y = weight)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(alpha = 0.1, color = 'cadetblue') +
+  labs(x = 'Species of Animal', 
+       y = 'Weight in grams') +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+  theme_grey(base_size = 9)
 ```
 
 -   Example 2
 
 ```{r r-2-2}
 #Lab 4 Q7
+#Revision: removed c() within select function
 
 avocado_cali_size <- avocado_cali |>
-  select(c('Small_Medium',
+  select('Small_Medium',
            'Large', 
            'Extra Large', 
            'type', 
-           'region')) |>
+           'region') |>
   pivot_longer(Small_Medium : `Extra Large`,
                names_to = "Size",
                values_to = "Volume") |>
@@ -395,17 +329,6 @@ avocado_cali_size <- avocado_cali |>
            Size,
            type) |>
   summarise(volume_sold = sum(Volume)) 
-  
-ggplot(data = avocado_cali_size, 
-       mapping = aes(x = region,
-                     y = volume_sold,
-                     fill = Size)) +
-  geom_col(position = "fill") +
-  facet_wrap(. ~ type) +
-  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
-  labs(x = "Region of CA",
-       y = "Proportion of Mean Avocados Sold") +
-  theme_grey(base_size = 14)
 ```
 
 **R-3: I can write robust programs that are resistant to changes in inputs.**
@@ -414,13 +337,14 @@ ggplot(data = avocado_cali_size,
 
 ```{r r-3-1}
 #Lab 4 Q7
+#Revision: removed c() within select function
 
 avocado_cali_size <- avocado_cali |>
-  select(c('Small_Medium',
+  select('Small_Medium',
            'Large', 
            'Extra Large', 
            'type', 
-           'region')) |>
+           'region') |>
   pivot_longer(Small_Medium : `Extra Large`,
                names_to = "Size",
                values_to = "Volume") |>
@@ -428,30 +352,18 @@ avocado_cali_size <- avocado_cali |>
            Size,
            type) |>
   summarise(volume_sold = sum(Volume)) 
-  
-ggplot(data = avocado_cali_size, 
-       mapping = aes(x = region,
-                     y = volume_sold,
-                     fill = Size)) +
-  geom_col(position = "fill") +
-  facet_wrap(. ~ type) +
-  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
-  labs(x = "Region of CA",
-       y = "Proportion of Mean Avocados Sold") +
-  theme_grey(base_size = 14)
 ```
 
 -   Example 2
 
 ```{r r-3-2}
-#Lab 2 Q13
+#Lab 3 Q11
 
-ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
-  geom_boxplot(outlier.shape = NA) +
-  geom_jitter(alpha = 0.1, color = 'cadetblue') +
-  labs(x = 'Species of Animal', y = 'Weight in grams') +
-  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
-  theme_grey(base_size = 9)
+hiphop_clean |>
+  filter(age < 20) |>
+  group_by(word) |>
+  summarize(mean_fam = mean(as.numeric(familiarity))) |>
+  slice_min(mean_fam)
 ```
 
 ## Data Visualization & Summarization
@@ -463,7 +375,8 @@ ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
 ```{r dvs-1-num}
 #Lab 2 Q6
 
-ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) +
+ggplot(data = surveys, 
+       mapping = aes(x = weight, y = hindfoot_length)) +
   geom_jitter(alpha = 0.3)
 ```
 
@@ -471,33 +384,6 @@ ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) +
 
 ```{r dvs-2-num-cat}
 #Challenge 4
-
-avocado_new <- avocado_clean |>
-  semi_join(y = cali_regions, by = 'region') |>
-  mutate('Avo_sales_USD' = AveragePrice * `Total Volume`,
-         'Date' = as.Date(Date),
-         'month' = floor_date(Date, 'month')) |>
-  select(month, Avo_sales_USD, region) |>
-  group_by(region, month) |>
-  summarise(Avo_sales_USD = sum(Avo_sales_USD))
-
-housing_prices <- housing_prices_og |>
-  pivot_longer("2015-01-31" : "2018-03-31",
-             names_to = "Date",
-             values_to = "Avg_house_price") |>
-  filter(State == "CA") |>
-  mutate('region' =
-           str_replace(RegionName,
-                       " ", 
-                       ""),
-         'Date' = as.Date(Date),
-         'month' = floor_date(Date, 'month')) |>
-  select(region, month, Avg_house_price) |>
-  right_join(cali_regions) |>
-  drop_na() 
-
-avo_house <- housing_prices |>
-  full_join(avocado_new, by = c('region', 'month'))
 
 ggplot(data = avo_house) +
   geom_line(mapping = aes(x = month, y = Avg_house_price), color = "blue") +
@@ -509,28 +395,39 @@ ggplot(data = avo_house) +
 -   categorical variables
 
 ```{r dvs-2-cat}
-#Lab 2 Q4
+#Lab 5 Captures over the Week Q3
 
-ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
-  geom_boxplot(outlier.shape = NA) +
-  geom_jitter(alpha = 0.1, color = 'cadetblue') +
-  labs(title = 'Question 12') +
-  scale_x_discrete(guide = guide_axis(n.dodge = 2))
+week_day_end <- 
+  fct_collapse(rodent_data$days_of_week, 
+               "Weekday" = c("Mon", 
+                             "Tue", 
+                             "Wed", 
+                             "Thu", 
+                             "Fri"), 
+               "Weekend" = c("Sat", 
+                             "Sun"))
 ```
 
 -   dates
 
 ```{r dvs-2-date}
-#Lab 5 Time-Series Q3
+#Lab 5 Time-Series Q5
 
-genus_weight <- surveys |>
-  group_by(genus) |>
+genus_mean_weight <- surveys |>
   mutate(year = year(date)) |>
+  group_by(genus, 
+           year) |>
+  summarise(mean_weight = mean(weight)) |>
   na.omit()
 
-ggplot(data = genus_weight, mapping = aes(x = year, y = weight)) +
-  geom_line(mapping = aes(color = genus)) +
-  labs(title = "Weight of Genus over time", y = "Weight in grams") +
+ggplot(data = genus_mean_weight, 
+       mapping = aes(x = year, y = mean_weight)) +
+  geom_line(mapping = aes(
+    color = fct_rev(
+      fct_reorder(genus, mean_weight)))) +
+  labs(title = "Mean Weight of Genus over Time", 
+       y = "Mean Weight in Grams") +
+  scale_color_discrete(name = "Genus") +
   theme_grey(base_size = 10)
 ```
 
@@ -539,26 +436,7 @@ ggplot(data = genus_weight, mapping = aes(x = year, y = weight)) +
 -   Example 1
 
 ```{r dvs-2-1}
-#Lab 2 Q4
-
-ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
-  geom_boxplot(outlier.shape = NA) +
-  geom_jitter(alpha = 0.1, color = 'cadetblue') +
-  labs(x = 'Species of Animal', y = 'Weight in grams') +
-  scale_x_discrete(guide = guide_axis(n.dodge = 2))
-```
-
--   Example 2
-
-```{r dvs-2-2}
 #Lab 4 Q5
-
-top5metro <- avocado_clean |>
-  anti_join(y = regions_other, by = 'region')|>
-  group_by(region) |>
-  summarise(mean_vol = mean(`Total Volume`)) |>
-  arrange(desc(mean_vol)) |>
-  slice(1:5)
 
 avocado_clean |>
   semi_join(y = top5metro, by = 'region') |>
@@ -570,6 +448,19 @@ avocado_clean |>
   theme_grey(base_size = 14)
 ```
 
+-   Example 2
+
+```{r dvs-2-2}
+#Lab 5 Time Series Plot Q5
+
+ggplot(data = genus_mean_weight, 
+       mapping = aes(x = year, y = mean_weight)) +
+  geom_line(mapping = aes(color = fct_rev(fct_reorder(genus, mean_weight)))) +
+  labs(title = "Mean Weight of Genus over Time", y = "Mean Weight in Grams") +
+  scale_color_discrete(name = "Genus") +
+  theme_grey(base_size = 10)
+```
+
 **DVS-3: I show creativity in my visualizations**
 
 -   Example 1
@@ -577,10 +468,12 @@ avocado_clean |>
 ```{r dvs-3-1}
 #Lab 2 Q13
 
-ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
+ggplot(data = surveys, 
+       mapping = aes(x = species, y = weight)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(alpha = 0.1, color = 'cadetblue') +
-  labs(x = 'Species of Animal', y = 'Weight in grams') +
+  labs(x = 'Species of Animal', 
+       y = 'Weight in grams') +
   scale_x_discrete(guide = guide_axis(n.dodge = 2))
 ```
 
@@ -589,20 +482,12 @@ ggplot(data = surveys, mapping = aes(x = species, y = weight)) +
 ```{r dvs-3-2}
 #Lab 5 Time Series Q5
 
-week_day_end <- 
-  fct_collapse(rodent_data$days_of_week, 
-               "Weekday" = c("Mon", 
-                             "Tue", 
-                             "Wed", 
-                             "Thu", 
-                             "Fri"), 
-               "Weekend" = c("Sat", 
-                             "Sun"))
-
-ggplot(data = rodent_data, mapping = aes(x = week_day_end)) +
-  geom_bar(mapping = aes(fill = days_of_week)) +
-  scale_fill_brewer(palette = "Accent") |>
-  labs(title = "Rodents Captured (Weekend vs Weekdays)", x = "") +
+ggplot(data = genus_mean_weight, 
+       mapping = aes(x = year, y = mean_weight)) +
+  geom_line(mapping = aes(color = fct_rev(fct_reorder(genus, mean_weight)))) +
+  labs(title = "Mean Weight of Genus over Time", 
+       y = "Mean Weight in Grams") +
+  scale_color_discrete(name = "Genus") +
   theme_grey(base_size = 10)
 ```
 
@@ -617,37 +502,21 @@ hiphop_clean |>
   filter(ethnic == 'non-white',
          sex == 'Female') |>
   group_by(word) |>
-  summarize(mean_fam = mean(as.numeric(familiarity))) |>
+  summarise(mean_fam = mean(as.numeric(familiarity))) |>
   slice_min(mean_fam)
-
-hiphop_clean |>
-  filter(ethnic == 'non-white',
-         sex == 'Female') |>
-  group_by(word) |>
-  summarize(mean_fam = mean(as.numeric(familiarity))) |>
-  slice_max(mean_fam)
 ```
 
 -   Example 2
 
 ```{r dvs-4-2}
 #Lab 4 Q5
+#revision: combined arrange+slice function into single slice_max function
 
 top5metro <- avocado_clean |>
   anti_join(y = regions_other, by = 'region')|>
   group_by(region) |>
   summarise(mean_vol = mean(`Total Volume`)) |>
-  arrange(desc(mean_vol)) |>
-  slice(1:5)
-
-avocado_clean |>
-  semi_join(y = top5metro, by = 'region') |>
-  ggplot(mapping = aes(x = region , y = `Total Volume`)) +
-  geom_boxplot() +
-  geom_jitter(alpha = 0.4, color = 'cadetblue') +
-  labs(title = 'Total Volume of Avocado Sales for Top 5 Regions') +
-  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
-  theme_grey(base_size = 14)
+  slice_max(n = 5, order_by = mean_vol)
 ```
 
 **DVS-5: I can find summaries of variables across multiple groups.**
@@ -656,12 +525,6 @@ avocado_clean |>
 
 ```{r dvs-5-1}
 #Challenge 3
-
-hiphop_artists <- hiphop_clean |>
-  select(subj, sex, ethnic, intl:unclassifiable) |>
-  distinct(subj, .keep_all = TRUE)
-
-#Male versus Female
 hiphop_artists |>
   group_by(sex) |>
   summarise(
@@ -672,40 +535,19 @@ hiphop_artists |>
       intl:unclassifiable, diff)) |>
   abs() |>
   which.max()
-
-#White versus Non-white
-hiphop_artists |>
-  group_by(ethnic) |>
-  summarise(
-    across(
-      intl:unclassifiable, mean)) |>
-  summarise(
-    across(
-      intl:unclassifiable, diff))|>
-  abs() |>
-  which.max()
 ```
 
 -   Example 2
 
 ```{r dvs-5-2}
 #Lab 4 Q5
+#revision: combined arrange+slice function into single slice_max function
 
 top5metro <- avocado_clean |>
   anti_join(y = regions_other, by = 'region')|>
   group_by(region) |>
   summarise(mean_vol = mean(`Total Volume`)) |>
-  arrange(desc(mean_vol)) |>
-  slice(1:5)
-
-avocado_clean |>
-  semi_join(y = top5metro, by = 'region') |>
-  ggplot(mapping = aes(x = region , y = `Total Volume`)) +
-  geom_boxplot() +
-  geom_jitter(alpha = 0.4, color = 'cadetblue') +
-  labs(title = 'Total Volume of Avocado Sales for Top 5 Regions') +
-  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
-  theme_grey(base_size = 14)
+  slice_max(n = 5, order_by = mean_vol)
 ```
 
 **DVS-6: I can create tables which make my summaries clear to the reader.**
@@ -726,7 +568,9 @@ housing_prices <- housing_prices_og |>
                        ""),
          'Date' = as.Date(Date),
          'month' = floor_date(Date, 'month')) |>
-  select(region, month, Avg_house_price) |>
+  select(region, 
+         month, 
+         Avg_house_price) |>
   right_join(cali_regions) |>
   drop_na()
 
@@ -740,7 +584,8 @@ avo_house <- housing_prices |>
 #Lab 9 Q10
 
 Aln_prop <- StateNames_A |>
-  filter(Name %in% c('Allan', 'Alan', 'Allen'),
+  filter(
+    Name %in% c('Allan', 'Alan', 'Allen'),
            Year == 2000,
            State %in% c('CA', 'PA')
          ) |>
@@ -748,7 +593,9 @@ Aln_prop <- StateNames_A |>
   summarize(total_count = sum(Count)) |>
   group_by(State) |>
   mutate(Prop = total_count / sum(total_count)) |>
-  select(Name, State, Prop) |>
+  select(Name, 
+         State, 
+         Prop) |>
   pivot_wider(names_from = Name, values_from = Prop)
 ```
 
@@ -770,7 +617,9 @@ housing_prices <- housing_prices_og |>
                        ""),
          'Date' = as.Date(Date),
          'month' = floor_date(Date, 'month')) |>
-  select(region, month, Avg_house_price) |>
+  select(region, 
+         month, 
+         Avg_house_price) |>
   right_join(cali_regions) |>
   drop_na() 
 
@@ -893,6 +742,7 @@ rescale_01 <- function(x) {
 
 ```{r pe-3-across}
 #Lab 7 Q5
+#Revision: updated across syntax
 
 rescale_column <- function(df, var) {
   df <- df |>
@@ -959,34 +809,15 @@ avocado_cali_size <- avocado_cali |>
 -   Example 2
 
 ```{r pe-4-2}
-#Challenge 4
+#Lab 4 Q3
 
-avocado_new <- avocado_clean |>
-  semi_join(y = cali_regions, by = 'region') |>
-  mutate('Avo_sales_USD' = AveragePrice * `Total Volume`,
-         'Date' = as.Date(Date),
-         'month' = floor_date(Date, 'month')) |>
-  select(month, Avo_sales_USD, region) |>
-  group_by(region, month) |>
-  summarise(Avo_sales_USD = sum(Avo_sales_USD))
-
-housing_prices <- housing_prices_og |>
-  pivot_longer("2015-01-31" : "2018-03-31",
-             names_to = "Date",
-             values_to = "Avg_house_price") |>
-  filter(State == "CA") |>
-  mutate('region' =
-           str_replace(RegionName,
-                       " ", 
-                       ""),
-         'Date' = as.Date(Date),
-         'month' = floor_date(Date, 'month')) |>
-  select(region, month, Avg_house_price) |>
-  right_join(cali_regions) |>
-  drop_na() 
-
-avo_house <- housing_prices |>
-  full_join(avocado_new, by = c('region', 'month'))
+avocado_clean |>
+  semi_join(y = regions_major, by = 'region') |>
+  filter(year == 2017,
+         type == "organic") |>
+  group_by(region) |>
+  summarise(sum_sm_med = sum(`Small_Medium`)) |>
+  slice_max(sum_sm_med)
 ```
 
 ## Data Simulation & Modeling
@@ -997,15 +828,15 @@ avo_house <- housing_prices |>
 
 ```{r dsm-1-1}
 #Lab 9 Q3
+#Revision: Changed from scatterplot to bar plot, since I changed each observation to be one year
 
-allison_f_year <- allison_f |> 
-  group_by(State) |>
-  replace_na(list('Count' = 0)) |>
-  select(Year, State, Count)
+allison_f$Year <- factor(allison_f$Year)
 
-ggplot(data = allison_f_year, mapping = aes(x = Year, y = Count)) +
-  geom_jitter(alpha = 0.3, color = 'tomato') +
-  labs(title = "Number of Allisons in State over Time")
+ggplot(data = allison_f,
+       mapping = aes(x = Year, y = Count)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Number of Allisons in State over Time") +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))
 ```
 
 -   Example 2
@@ -1014,7 +845,7 @@ ggplot(data = allison_f_year, mapping = aes(x = Year, y = Count)) +
 #Practice Activity 9.2 Q3
 
 my_model_2 <- penguins |>
-  lm(bill_length_mm ~ bill_depth_mm*species, data = _)
+  lm(bill_length_mm ~ bill_depth_mm * species, data = _)
 
 penguins |>
   ggplot(aes(x = bill_depth_mm, y = bill_length_mm)) +
