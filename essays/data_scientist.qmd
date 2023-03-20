@@ -3,3 +3,20 @@ title: "My Growth as a Data Scientist"
 format: html
 editor: visual
 ---
+
+Prior to this course, I would have not considered myself a data scientist at all. As a business major with minor previous coding experience, this was my first true introduction to using code to work with data. In fact, I was even able to transition to using R as my primary coding language in my Advanced Econometrics class. In particular, I believe that my ability to produce professional looking analyses has seen the most improvement, especially with the use of tools such as Quarto documentation and the KableExtra package. Some artifacts that I believe greatly demonstrate my improvements are Lab 2, Lab 4, and Lab 5.
+
+	Additionally, I have become much more comfortable with visualizing and summarizing data, especially when it comes to making my tables and graphs easy to read as well as visually appealing. With plot modification tools like ggplot, I have been able to successfully learn and execute creative bar plots, scatter plots, area plots, etc, while also including my own personal creativity by adjusting colors, text size, and the use of themes. This can be seen in my Lab 4. Similarly, as mentioned before, I have also been able to demonstrate creativity in my tables using the Kable and KableExtra packages, which I have been able to demonstrate in Challenge 9 Question 10. In this challenge, I used these packages to create html format tables that could easily be read and understood by wrangling the data and adjusting font type, size, and table characteristics.
+
+	Finally, an area in which I have grown a lot is the tidiness and reproducibility of my code. I was admittedly slightly resistant to the idea of having to write code in a particular format and style, but quickly grew to appreciate the organizational and reproducible aspect of having tidy code. While it was difficult to adjust to consistently naming arguments, using proper returns, and optimizing my code at first, I adapted and am now much more familiar with what reproducible and concise code looks like. For example, in Lab 4 Question 7, I had written code that selected 5 columns in the dataframe and used pivot_longer to merge it with a second frame before finding a summary statistic finding the sum of volume. The code I had written for this task includes pipe operators in order to improve the readability of the code to avoid the clutter of nesting functions, proper use of returns to shorten lines, and in general, was written with reproducibility in mind, so that if desired, can be edited or reused in the future with a different intention.
+
+Overall, this course has been an extremely valuable learning experience for me, as it has allowed me to gain a solid foundation in the fundamentals of data analysis using code. Through the labs, challenges, and lectures, I have been able to improve my skills in data manipulation, visualization, and analysis, as well as gain an appreciation for the importance of reproducible and tidy code. I am excited to continue building on these skills in future projects and am grateful for the knowledge and experience gained in this course.
+
+	
+
+\
+
+\
+
+\
+

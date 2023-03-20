@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>The Power of Efficiency</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="efficiency_files/libs/clipboard/clipboard.min.js"></script>
+<script src="efficiency_files/libs/quarto-html/quarto.js"></script>
+<script src="efficiency_files/libs/quarto-html/popper.min.js"></script>
+<script src="efficiency_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="efficiency_files/libs/quarto-html/anchor.min.js"></script>
+<link href="efficiency_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="efficiency_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="efficiency_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="efficiency_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="efficiency_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">The Power of Efficiency</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Efficiency in a general sense refers to the idea of minimizing the amount of work that is required to complete a goal or task. In the context of statistical computing for this course, this primarily means optimizing one's code by reducing the amount of steps and computations it takes to reach a desired result. This saves time and energy as it takes less memory and thus time in order to run the code as well as reduces the risk of errors. This can be achieved in a variety of ways. In this course specifically, I learned how to write efficiently through the practice of being concise as well as the use of functions, iteration, and modern tools.</p>
+<p>First, the use of functions can greatly improve efficiency by allowing one to produce code that can be reused. Rather than writing the same code over and over again, one can call the function with the proper arguments to achieve the same goal.</p>
+<p>Similarly, iteration can allow for the same task to be performed on a number of data points at once without having to repeat the code. We primarily saw this through the use of the across function, which allowed us to apply a function or operation to multiple columns at once, and the map function, which allowed us to apply a function to a specified number of elements in a vector or list.</p>
+<p>Finally, modern tools like the dplyr package allow us to produce efficient code as they were specifically designed with efficiency and functionality in mind. When tools are developed or updated, the professionals producing them have the intent of making R as a whole easier and more optimal to use. My personal favorite tool that we have used in this class is the piping operator. This operator is used to intuitively chain function calls and outputs together in order to make code easier to read and understand. In Lab 4, the first assignment in which it was used, the piping operator was difficult to understand, as I essentially had to learn how to read the code backwards from how I was doing before, but with time, it soon became my method of choice for how much easier it became to follow and edit my code.&nbsp;</p>
+<p>The moment in which I fully understood how significant efficient code was in Lab 8, when we used the map function to iterate through the entire song using the functions we made to write each line of the song. By using functions, we were able to compose each individual line based on the arguments given. By using the mapping function, we could use the elements inside our dataframe by passing each column into argument to build each unique line of the song. I realized that by using these tools, I was not only saving time by not having to rewrite lines of code, but also saving memory on my computer and reducing the time it would take to run the code.</p>
+<p>Overall, writing concise code demonstrates a deep understanding of the code at hand while also improving the readability and efficiency. Code that is too long or convoluted can be difficult to maintain and modify. It also makes it more difficult to debug, as errors will be more difficult to identify and fix. In general, long code takes more memory and lengthens the time necessary to run, which in today's computation heavy environment, are key points that we are trying to optimize.</p>
+<p><br>
+</p>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
