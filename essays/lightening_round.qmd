@@ -1,0 +1,17 @@
+---
+title: "Lightening Round Essays"
+format: html
+editor: visual
+---
+
+If Giovanni Librizzi doesn't earn an A, then nobody should, because he consistently made an effort in the class to learn the material beyond a surface level understanding and extend the knowledge to people who had less coding experience.
+
+The most difficult part of the class for me was understanding how each of pivot functions differed from one another and what moment would be ideal to use each one.
+
+The easiest part of the class for me was understanding how to analyze the regressions and simulate data, as that was a large aspect of STAT324 which I took last year.
+
+I was most surprised by how quickly I was able to transition from struggling to utilize a new method or element in coding to it becoming a normal part of my coding skill set, particularly after completing a difficult lab assignment.
+
+The piece of advice that even though the weekly lab and challenge assignments are difficult and often time consuming, struggling through them is the best way to grasp new concepts, and that the concepts that seem difficult in the moment quickly become easy and practical to use.
+
+\
